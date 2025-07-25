@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .  # caminho correto onde está seu Dockerfile
+    container_name: orienta-tcc-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.3
+    container_name: orienta-tcc-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: orienta_tcc
+      MYSQL_USER: orienta_user
+      MYSQL_PASSWORD: orienta_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+    driver: local
