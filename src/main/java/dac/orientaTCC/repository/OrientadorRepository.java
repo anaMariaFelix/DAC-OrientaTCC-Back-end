@@ -12,7 +12,7 @@ public interface OrientadorRepository extends JpaRepository<Orientador, Long> {
 
     Optional<Orientador> findByUsuarioEmail(String email);
 
-    Orientador findBySiape(String siape);
+    Optional<Orientador> findBySiape(String siape);
 
     Optional<Orientador> findByUsuarioId(Long usuarioId);
 }
