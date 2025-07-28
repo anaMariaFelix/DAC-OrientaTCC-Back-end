@@ -3,26 +3,24 @@ package dac.orientaTCC.service;
 import dac.orientaTCC.dto.AlunoCreateDTO;
 import dac.orientaTCC.dto.AlunoResponseDTO;
 import dac.orientaTCC.dto.UsuarioCreateDTO;
-import dac.orientaTCC.enums.StatusTrabalho;
-import dac.orientaTCC.exception.TrabalhoAcademicoEmAndamentoExceptionn;
-import dac.orientaTCC.exception.TrabalhoAcademicoNaoEncontradoPorMatriculaException;
+import dac.orientaTCC.exception.EmailUniqueViolationException;
+import dac.orientaTCC.exception.EntityNotFoundException;
+import dac.orientaTCC.exception.MatriculaUniqueViolationException;
 import dac.orientaTCC.mapper.AlunoMapper;
 import dac.orientaTCC.model.entities.Aluno;
 import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import dac.orientaTCC.model.entities.Usuario;
 import dac.orientaTCC.repository.AlunoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static dac.orientaTCC.enums.StatusTrabalho.EM_ANDAMENTO;
 
 @Slf4j
 @Service
@@ -47,43 +45,52 @@ public class AlunoService {
 
 
     @Transactional
-    public Aluno save(Aluno aluno) { //colocar o tratamento depois
+    public Aluno save(Aluno aluno) {
         return alunoRepository.save(aluno);
     }
 
     @Transactional
-    public AlunoResponseDTO create(@Valid AlunoCreateDTO alunoCreateDTO) {
-        Usuario usuario = usuarioService.salvar(new UsuarioCreateDTO(alunoCreateDTO.getEmail(), alunoCreateDTO.getSenha(), "ROLE_ALUNO"));
-        Aluno aluno = AlunoMapper.toAluno(alunoCreateDTO);
-        aluno.setUsuario(usuario);
+    public AlunoResponseDTO create(@Valid AlunoCreateDTO alunoCreateDTO) { // o try é novo, vcs podem ver outra forma de fazer, mas sem mudar a logica, dando um refatorada
+        log.info("create aluno log 1");//log é opcional pode mudar ou tirar
+        Aluno aluno;
+        try{
+            Usuario usuario = usuarioService.salvar(new UsuarioCreateDTO(alunoCreateDTO.getEmail(), alunoCreateDTO.getSenha(), "ROLE_ALUNO"));
 
-        aluno = save(aluno);
+            aluno = AlunoMapper.toAluno(alunoCreateDTO);
+            aluno.setUsuario(usuario);
+
+            aluno = save(aluno);
+
+        }catch (DataIntegrityViolationException e){
+            throw new MatriculaUniqueViolationException(String.format("Matricula %s não pode ser cadastrada, já existente no sistema", alunoCreateDTO.getMatricula()));
+        }
 
         return AlunoMapper.toAlunoDTO(aluno);
     }
 
     @Transactional(readOnly = true)
-    public Aluno findById(Long id) {
+    public Aluno findById(Long id) {//tratado no hendler
         return alunoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Usuario id = %s não encontrado", id))
         );
     }
 
     @Transactional(readOnly = true)
-    public Aluno findByIdUsuario(Long id) {
+    public Aluno findByIdUsuario(Long id) { //tratado no hendler
         return alunoRepository.findByUsuarioId(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Usuario id = %s não encontrado", id))
         );
     }
 
-    public Aluno findByEmail(String email) {
+    public Aluno findByEmail(String email) {//tratado no hendler
         return alunoRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
     }
 
     @Transactional(readOnly = true)
-    public Aluno findByMatricula(String matricula) {
-        return alunoRepository.findByMatricula(matricula);
+    public Aluno findByMatricula(String matricula) {//exceção acrecentada, tem mudança no repository tbm
+        return alunoRepository.findByMatricula(matricula).orElseThrow(
+                () -> new EntityNotFoundException("Aluno não encontrado"));
     }
 
     @Transactional(readOnly = true)
