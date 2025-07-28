@@ -2,19 +2,19 @@ package dac.orientaTCC.service;
 
 import dac.orientaTCC.dto.*;
 import dac.orientaTCC.enums.Role;
+import dac.orientaTCC.exception.EntityNotFoundException;
 import dac.orientaTCC.exception.NaoPodeRemoverOrientadorException;
+import dac.orientaTCC.exception.SiapeUniqueViolationException;
 import dac.orientaTCC.mapper.OrientadorMapper;
-import dac.orientaTCC.model.entities.Aluno;
 import dac.orientaTCC.model.entities.Orientador;
 import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import dac.orientaTCC.model.entities.Usuario;
 import dac.orientaTCC.repository.AlunoRepository;
 import dac.orientaTCC.repository.OrientadorRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,19 +46,24 @@ public class OrientadorService {
     }
 
     @Transactional
-    public Orientador save(Orientador orientador) { //colocar o tratamento depois
+    public Orientador save(Orientador orientador) {
         return orientadorRepository.save(orientador);
     }
 
     @Transactional
     public OrientadorResponseDTO create(@Valid OrientadorCreateDTO orientadorCreateDTO) {
+
         Usuario usuario = usuarioService.salvar(new UsuarioCreateDTO(orientadorCreateDTO.getEmail(), orientadorCreateDTO.getSenha(), "ROLE_ORIENTADOR"));
 
         Orientador orientador = OrientadorMapper.toOrientador(orientadorCreateDTO);
         orientador.setUsuario(usuario);
+        try{
+            orientador = save(orientador);
 
-        orientador = save(orientador);
-        log.info("email no create: {}", orientador.getUsuario().getEmail());
+        }catch (DataIntegrityViolationException e){
+            throw new SiapeUniqueViolationException(String.format("Siape %s não pode ser cadastrado, já existente no sistema", orientadorCreateDTO.getSiape()));
+        }
+
         return OrientadorMapper.toOrientadorDTO(orientador);
     }
 
@@ -76,8 +81,9 @@ public class OrientadorService {
     }
 
     @Transactional(readOnly = true)
-    public Orientador findBySiape(String siape) {
-        return orientadorRepository.findBySiape(siape);
+    public Orientador findBySiape(String siape) {//excecção nova, tbm tem mudança no repository
+        return orientadorRepository.findBySiape(siape)
+                .orElseThrow(() -> new EntityNotFoundException("orientador não encontrado"));
     }
 
     @Transactional(readOnly = true)
