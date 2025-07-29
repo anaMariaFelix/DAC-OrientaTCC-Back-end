@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Captura exceções de validação creates
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> handleValidationException(MethodArgumentNotValidException ex,
             HttpServletRequest request) {
@@ -48,7 +47,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
-    // excecao personalizada
     @ExceptionHandler(TrabalhoAcademicoNaoEncontradoPorMatriculaException.class)
     public ResponseEntity<ErrorMessage> handleTrabalhoNaoEncontrado(
             TrabalhoAcademicoNaoEncontradoPorMatriculaException ex, HttpServletRequest request) {
@@ -59,7 +57,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)//metodo novo
+    @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException e, HttpServletRequest request){
 
         log.error("Api Error - ", e);
@@ -68,19 +66,19 @@ public class GlobalExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
-    @ExceptionHandler({SiapeUniqueViolationException.class, MatriculaUniqueViolationException.class}) //metodo novo
+    @ExceptionHandler({SiapeUniqueViolationException.class, MatriculaUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException e, HttpServletRequest request){
 
-        log.error("Api Error - ", e);//pode tirar esse log
+        log.error("Api Error - ", e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.CONFLICT, e.getMessage()));
     }
 
-    @ExceptionHandler({EmailUniqueViolationException.class}) //metodo novo
+    @ExceptionHandler({EmailUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> emailUniqueViolationException(RuntimeException e, HttpServletRequest request){
 
-        log.error("Api Error - ", e);//pode tirar esse log
+        log.error("Api Error - ", e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.CONFLICT, e.getMessage()));

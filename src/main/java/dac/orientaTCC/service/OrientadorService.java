@@ -81,7 +81,7 @@ public class OrientadorService {
     }
 
     @Transactional(readOnly = true)
-    public Orientador findBySiape(String siape) {//excecção nova, tbm tem mudança no repository
+    public Orientador findBySiape(String siape) {
         return orientadorRepository.findBySiape(siape)
                 .orElseThrow(() -> new EntityNotFoundException("orientador não encontrado"));
     }

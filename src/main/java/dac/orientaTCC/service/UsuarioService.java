@@ -24,7 +24,7 @@ public class UsuarioService {
     public Usuario salvar(UsuarioCreateDTO usuarioCreateDTO) {
         Usuario usuario = UsuarioMapper.toUsuario(usuarioCreateDTO);
         try{
-            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));//fazendo isso o passwordEncoder.encode realiza a criptografia da senha retornando a senha criptografada
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
             return usuarioRepository.save(usuario);
 
         }catch (DataIntegrityViolationException e){

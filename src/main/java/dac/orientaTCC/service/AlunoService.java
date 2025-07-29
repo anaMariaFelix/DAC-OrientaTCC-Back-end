@@ -50,8 +50,8 @@ public class AlunoService {
     }
 
     @Transactional
-    public AlunoResponseDTO create(@Valid AlunoCreateDTO alunoCreateDTO) { // o try é novo, vcs podem ver outra forma de fazer, mas sem mudar a logica, dando um refatorada
-        log.info("create aluno log 1");//log é opcional pode mudar ou tirar
+    public AlunoResponseDTO create(@Valid AlunoCreateDTO alunoCreateDTO) {
+        log.info("create aluno log 1");
         Aluno aluno;
         try{
             Usuario usuario = usuarioService.salvar(new UsuarioCreateDTO(alunoCreateDTO.getEmail(), alunoCreateDTO.getSenha(), "ROLE_ALUNO"));
@@ -69,26 +69,26 @@ public class AlunoService {
     }
 
     @Transactional(readOnly = true)
-    public Aluno findById(Long id) {//tratado no hendler
+    public Aluno findById(Long id) {
         return alunoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Usuario id = %s não encontrado", id))
         );
     }
 
     @Transactional(readOnly = true)
-    public Aluno findByIdUsuario(Long id) { //tratado no hendler
+    public Aluno findByIdUsuario(Long id) {
         return alunoRepository.findByUsuarioId(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Usuario id = %s não encontrado", id))
         );
     }
 
-    public Aluno findByEmail(String email) {//tratado no hendler
+    public Aluno findByEmail(String email) {
         return alunoRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
     }
 
     @Transactional(readOnly = true)
-    public Aluno findByMatricula(String matricula) {//exceção acrecentada, tem mudança no repository tbm
+    public Aluno findByMatricula(String matricula) {
         return alunoRepository.findByMatricula(matricula).orElseThrow(
                 () -> new EntityNotFoundException("Aluno não encontrado"));
     }

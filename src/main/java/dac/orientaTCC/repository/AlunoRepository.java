@@ -14,7 +14,7 @@ public interface AlunoRepository extends JpaRepository<Aluno, Long> {
     @Query("SELECT a FROM Aluno a JOIN FETCH a.usuario u WHERE u.email = :email")
     Optional<Aluno> findByUsuarioEmail(@Param("email") String email);
 
-    Optional<Aluno> findByMatricula(String matricula); //mudei para optional
+    Optional<Aluno> findByMatricula(String matricula);
 
     Optional<Aluno> findByUsuarioId(Long usuarioId);
 }
