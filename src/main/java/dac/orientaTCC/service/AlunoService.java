@@ -3,7 +3,6 @@ package dac.orientaTCC.service;
 import dac.orientaTCC.dto.AlunoCreateDTO;
 import dac.orientaTCC.dto.AlunoResponseDTO;
 import dac.orientaTCC.dto.UsuarioCreateDTO;
-import dac.orientaTCC.exception.EmailUniqueViolationException;
 import dac.orientaTCC.exception.EntityNotFoundException;
 import dac.orientaTCC.exception.MatriculaUniqueViolationException;
 import dac.orientaTCC.mapper.AlunoMapper;
@@ -51,7 +50,6 @@ public class AlunoService {
 
     @Transactional
     public AlunoResponseDTO create(@Valid AlunoCreateDTO alunoCreateDTO) {
-        log.info("create aluno log 1");
         Aluno aluno;
         try{
             Usuario usuario = usuarioService.salvar(new UsuarioCreateDTO(alunoCreateDTO.getEmail(), alunoCreateDTO.getSenha(), "ROLE_ALUNO"));

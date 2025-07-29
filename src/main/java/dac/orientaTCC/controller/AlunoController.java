@@ -79,7 +79,7 @@ public class AlunoController {
 
     @PreAuthorize("hasRole('ALUNO') AND #alunoCreateDTO.getMatricula == authentication.principal.identificador")
     @PutMapping("/")
-    public ResponseEntity<AlunoResponseDTO> update(@RequestBody AlunoCreateDTO alunoCreateDTO){
+    public ResponseEntity<AlunoResponseDTO> update(@RequestBody @Valid AlunoCreateDTO alunoCreateDTO){
         Aluno aluno = alunoService.update(alunoCreateDTO);
         return ResponseEntity.ok().body(AlunoMapper.toAlunoDTO(aluno));
     }
