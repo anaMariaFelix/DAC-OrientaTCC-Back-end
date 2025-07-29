@@ -2,6 +2,7 @@ package dac.orientaTCC.service;
 
 import java.util.List;
 
+import dac.orientaTCC.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,6 @@ import dac.orientaTCC.exception.TrabalhoAcademicoNaoEncontradoPorMatriculaExcept
 import dac.orientaTCC.mapper.TrabalhoAcademicoTCCMapper;
 import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import dac.orientaTCC.repository.TrabalhoAcademicoTCCRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class TrabalhoAcademicoTCCService {
@@ -61,7 +61,9 @@ public class TrabalhoAcademicoTCCService {
 
     @Transactional(readOnly = true)
     public TrabalhoAcademicoTCC findByIdAluno(Long id) {
-        TrabalhoAcademicoTCC trabalho = trabalhoAcademicoTCCRepository.findByAlunoId(id);
+        TrabalhoAcademicoTCC trabalho = trabalhoAcademicoTCCRepository.findByAlunoId(id).orElseThrow(
+                () -> new EntityNotFoundException("Trabalho não encontrado")
+        );
 
         return trabalho;
     }

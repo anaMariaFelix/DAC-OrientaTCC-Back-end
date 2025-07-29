@@ -1,6 +1,7 @@
 package dac.orientaTCC.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface TrabalhoAcademicoTCCRepository extends JpaRepository<TrabalhoAc
 
     List<TrabalhoAcademicoTCC> findByOrientadorSiape(String orientador_Siape);
 
-    TrabalhoAcademicoTCC findByAlunoId(Long id);
+    Optional<TrabalhoAcademicoTCC> findByAlunoId(Long id);
 
     TrabalhoAcademicoTCC findByOrientadorId(Long id);
 }
