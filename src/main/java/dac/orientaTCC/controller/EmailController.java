@@ -11,16 +11,16 @@ import dac.orientaTCC.service.EmailService;
 @RequestMapping("/api/email")
 public class EmailController {
 
-//    private final EmailService emailService;
-//
-//    public EmailController(EmailService emailService) {
-//        this.emailService = emailService;
-//    }
-//
-//    @PostMapping("/enviar/{email}/{nome}")
-//    public String send(@PathVariable String email, @PathVariable String nome) {
-//        emailService.enviarEmail(email, nome);
-//        return "Enviado para " + email;
-//    }
+    private final EmailService emailService;
+
+    public EmailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    @PostMapping("/enviar/{email}/{nome}")
+    public String send(@PathVariable String email, @PathVariable String nome) {
+        emailService.enviarEmail(email, nome);
+        return "Enviado para " + email;
+    }
 
 }
