@@ -30,6 +30,9 @@ public class PDF {
     @Column(name = "nome_arquivo", nullable = false)
     private String nomeArquivo;
 
+    @Column(name = "nome_usuario_adicionou_pdf", nullable = false)
+    private String nomeAdicionou;
+
     @Lob
     @Column(name = "conteudo", nullable = false, columnDefinition = "LONGBLOB")
     private byte[] conteudo;
