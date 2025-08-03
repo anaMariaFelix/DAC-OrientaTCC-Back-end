@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,15 @@ import dac.orientaTCC.repository.AtividadeRepository;
 @Service
 public class AtividadeService {
 
-	@Autowired
-	private AtividadeRepository atividadeRepository;
+	private final AtividadeRepository atividadeRepository;
+	private final TrabalhoAcademicoTCCService trabalhoAcademicoTCCService;
 
+	public AtividadeService(AtividadeRepository atividadeRepository, TrabalhoAcademicoTCCService trabalhoAcademicoTCCService){
+		this.atividadeRepository = atividadeRepository;
+		this.trabalhoAcademicoTCCService = trabalhoAcademicoTCCService;
+	}
 
 	public ResponseEntity<?> salvarAtividade(AtividadeDTO atividadeDTO, List<MultipartFile> arquivos) {
-	
-
 		try {
 			List<PdfDTO> pdfDTOs = new ArrayList<>();
 
@@ -35,7 +37,8 @@ public class AtividadeService {
 				for (MultipartFile arquivo : arquivos) {
 					PdfDTO pdfDto = new PdfDTO();
 					pdfDto.setNomeArquivo(arquivo.getOriginalFilename());
-					pdfDto.setConteudo(arquivo.getBytes()); // seu campo byte[]
+					pdfDto.setConteudo(arquivo.getBytes());
+					pdfDto.setNomeAdicionou(atividadeDTO.getNomeAdicionouPdfs());
 
 					pdfDTOs.add(pdfDto);
 				}
@@ -43,8 +46,7 @@ public class AtividadeService {
 
 			atividadeDTO.setPdfs(pdfDTOs);
 
-			Atividade atividade = AtividadeMapper.atividadeMapper(atividadeDTO);
-
+			Atividade atividade = AtividadeMapper.toAtividade(atividadeDTO);
 			
 			if (atividade.getPdfs() != null) {
 				for (PDF pdf : atividade.getPdfs()) {
@@ -72,9 +74,6 @@ public class AtividadeService {
 		if (optional.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Atividade não encontrada");
 		}
-		if (!tipoUser.equalsIgnoreCase("ORIENTADOR")) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Apenas orientadores podem editar a atividade.");
-		}
 
 		Optional<Atividade> atividadeOptional = atividadeRepository.findById(atividadeDTO.getId());
 		if (atividadeOptional.isEmpty()) {
@@ -82,19 +81,20 @@ public class AtividadeService {
 		}
 
 		Atividade atividadeExistente = atividadeOptional.get();
+		TrabalhoAcademicoTCC trabalhoExistente = trabalhoAcademicoTCCService.findById(atividadeDTO.getIdTrabalho());//ADICIONEI esse objeto aqui
 
-		// Atualiza os dados que vieram
 		atividadeExistente.setNome(atividadeDTO.getNome());
 		atividadeExistente.setDescricao(atividadeDTO.getDescricao());
-		atividadeExistente.setComentario(atividadeDTO.getComentarios());
+		atividadeExistente.setComentarios(atividadeDTO.getComentarios());
 		atividadeExistente.setDataEntrega(atividadeDTO.getDataEntrega());
 		atividadeExistente.setStatus(atividadeDTO.getStatusPdf());
-		//atividadeExistente.setTrabalho(atividadeDTO.getTrabalhoAcademico());
+		atividadeExistente.setTrabalho(trabalhoExistente);
 
 		// Adiciona novos PDFs 
 		if (arquivos != null && !arquivos.isEmpty()) {
 			for (MultipartFile arquivo : arquivos) {
 				PDF novoPdf = new PDF();
+				novoPdf.setNomeAdicionou(atividadeDTO.getNomeAdicionouPdfs());
 				novoPdf.setNomeArquivo(arquivo.getOriginalFilename());
 				try {
 					novoPdf.setConteudo(arquivo.getBytes());
