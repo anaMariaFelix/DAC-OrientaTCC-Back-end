@@ -122,7 +122,13 @@ public class OrientadorService {
     public Orientador updateRole(OrientadorCreateDTO orientadorCreateDTO) {
         Orientador orientadorBuscado = findBySiape(orientadorCreateDTO.getSiape());
 
-        orientadorBuscado.getUsuario().setTipoRole(Role.ROLE_COORDENADOR);
+        Usuario usuario = usuarioService.buscarPorId(orientadorBuscado.getUsuario().getId());
+
+        if (usuario.getTipoRole() == Role.ROLE_ORIENTADOR) {
+            orientadorBuscado.getUsuario().setTipoRole(Role.ROLE_COORDENADOR);
+        }else{
+            orientadorBuscado.getUsuario().setTipoRole(Role.ROLE_ORIENTADOR);
+        }
         return orientadorBuscado;
     }
 
