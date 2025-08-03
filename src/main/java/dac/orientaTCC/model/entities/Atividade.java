@@ -59,5 +59,5 @@ public class Atividade {
     @JsonManagedReference
     private List<PDF> pdfs;
 
-    private String comentario;
+    private List<String> comentarios;
 }
