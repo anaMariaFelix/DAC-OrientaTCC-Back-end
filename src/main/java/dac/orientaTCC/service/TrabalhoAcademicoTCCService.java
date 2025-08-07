@@ -61,9 +61,7 @@ public class TrabalhoAcademicoTCCService {
 
     @Transactional(readOnly = true)
     public TrabalhoAcademicoTCC findByIdAluno(Long id) {
-        TrabalhoAcademicoTCC trabalho = trabalhoAcademicoTCCRepository.findByAlunoId(id).orElseThrow(
-                () -> new EntityNotFoundException("Trabalho não encontrado")
-        );
+        TrabalhoAcademicoTCC trabalho = trabalhoAcademicoTCCRepository.findByAlunoId(id).orElse(null);
 
         return trabalho;
     }
