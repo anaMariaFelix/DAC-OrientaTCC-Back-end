@@ -23,19 +23,6 @@ public class PDFService {
 	@Autowired
 	private AtividadeRepository atividadeRepository;
 
-	/*public PDF salvarPdf(PdfDTO pdfDTO) {
-	    Optional<Atividade> atividadeOptional = atividadeRepository.findById(pdfDTO.getIdAtividade());
-
-	    if (atividadeOptional.isEmpty()) {
-	        throw new RuntimeException("Atividade não encontrada.");
-	    }
-
-	    Atividade atividade = atividadeOptional.get();
-	    PDF pdf = PDFMapper.mappearPdf(pdfDTO, atividade);
-
-	    return pdfRepository.save(pdf);
-	}*/
-	
 	public PDF salvarPdf(PdfDTO pdfDTO) {
 	    Optional<Atividade> atividadeOptional = atividadeRepository.findById(pdfDTO.getIdAtividade());
 
@@ -46,20 +33,18 @@ public class PDFService {
 	    Atividade atividade = atividadeOptional.get();
 	    PDF pdf = PDFMapper.mappearPdf(pdfDTO, atividade);
 
-	    // 💥 Corrige aqui: certifique-se que o conteúdo seja atribuído
 	    pdf.setConteudo(pdfDTO.getConteudo());
 
 	    return pdfRepository.save(pdf);
 	}
-	
-	// Buscar PDF por ID e retornar DTO
+
 	public Optional<PdfDTO> buscarPdfPorId(Long id) {
 	    return pdfRepository.findById(id)
 	        .map(pdf -> {
 	            PdfDTO dto = new PdfDTO();
 	            dto.setId(pdf.getId());
 	            dto.setNomeArquivo(pdf.getNomeArquivo());
-	            dto.setConteudo(pdf.getConteudo()); // 💥 ESSENCIAL
+	            dto.setConteudo(pdf.getConteudo());
 	            dto.setIdAtividade(pdf.getAtividade().getId());
 	            return dto;
 	        });
