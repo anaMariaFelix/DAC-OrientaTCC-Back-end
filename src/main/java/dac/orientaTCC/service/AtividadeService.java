@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import dac.orientaTCC.enums.StatusPDF;
 import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import dac.orientaTCC.dto.AtividadeDTO;
 import dac.orientaTCC.dto.PdfDTO;
 import dac.orientaTCC.mapper.AtividadeMapper;
@@ -43,7 +42,6 @@ public class AtividadeService {
 					pdfDTOs.add(pdfDto);
 				}
 			}
-
 			atividadeDTO.setPdfs(pdfDTOs);
 
 			Atividade atividade = AtividadeMapper.toAtividade(atividadeDTO);
@@ -63,8 +61,7 @@ public class AtividadeService {
 		}
 	}
 
-	public ResponseEntity<?> editarAtividade(AtividadeDTO atividadeDTO, List<MultipartFile> arquivos,
-			String tipoUser) {
+	public ResponseEntity<?> editarAtividade(AtividadeDTO atividadeDTO, List<MultipartFile> arquivos, String tipoUser) {
 
 		if (atividadeDTO.getId() == null) {
 			return ResponseEntity.badRequest().body("ID da atividade não pode ser nulo");
@@ -76,12 +73,13 @@ public class AtividadeService {
 		}
 
 		Optional<Atividade> atividadeOptional = atividadeRepository.findById(atividadeDTO.getId());
+
 		if (atividadeOptional.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Atividade não encontrada.");
 		}
 
 		Atividade atividadeExistente = atividadeOptional.get();
-		TrabalhoAcademicoTCC trabalhoExistente = trabalhoAcademicoTCCService.findById(atividadeDTO.getIdTrabalho());//ADICIONEI esse objeto aqui
+		TrabalhoAcademicoTCC trabalhoExistente = trabalhoAcademicoTCCService.findById(atividadeDTO.getIdTrabalho());
 
 		atividadeExistente.setNome(atividadeDTO.getNome());
 		atividadeExistente.setDescricao(atividadeDTO.getDescricao());
@@ -90,7 +88,20 @@ public class AtividadeService {
 		atividadeExistente.setStatus(atividadeDTO.getStatusPdf());
 		atividadeExistente.setTrabalho(trabalhoExistente);
 
-		// Adiciona novos PDFs 
+		List<Atividade> listaAtividadeTrabalho = listarPorTrabalho(trabalhoExistente.getId());
+
+		int contador = 0;
+
+		for (Atividade atividade : listaAtividadeTrabalho) {
+			if(atividade.getStatus() == StatusPDF.AVALIADO){
+				contador++;
+			}
+		}
+
+		if(contador == listaAtividadeTrabalho.size()){
+			trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId());
+		}
+
 		if (arquivos != null && !arquivos.isEmpty()) {
 			for (MultipartFile arquivo : arquivos) {
 				PDF novoPdf = new PDF();

@@ -2,10 +2,10 @@ package dac.orientaTCC.service;
 
 import java.util.List;
 
+import dac.orientaTCC.enums.StatusTrabalho;
 import dac.orientaTCC.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import dac.orientaTCC.dto.TrabalhoAcademicoTCCCreateDTO;
 import dac.orientaTCC.dto.TrabalhoAcademicoTCCResponseDTO;
 import dac.orientaTCC.exception.TrabalhoAcademicoNaoEncontradoPorMatriculaException;
@@ -82,9 +82,19 @@ public class TrabalhoAcademicoTCCService {
         trabalhoAcademicoTCCRepository.delete(trabalhoExistente);
     }
 
+    @Transactional(readOnly = true)
     public TrabalhoAcademicoTCC findByIdOrientador(Long id) {
         TrabalhoAcademicoTCC trabalho = trabalhoAcademicoTCCRepository.findByOrientadorId(id);
 
         return trabalho;
+    }
+
+    @Transactional
+    public void updateStatus(Long id) {
+        TrabalhoAcademicoTCC trabalhoExistente = findById(id);
+
+        trabalhoExistente.setStatus(StatusTrabalho.CONCLUIDO);
+
+        trabalhoAcademicoTCCRepository.save(trabalhoExistente);
     }
 }
