@@ -12,11 +12,11 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    @Override  //lança a exceção quando o usuario n estiver logado com a resposta 401
+    @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("Http status 401 {}", authException.getMessage());
 
-        response.setHeader("www-authenticate", "Bearer realm='/api/auth'");//quando o usuario não estiver autenticado vai aparecer no cabeçario essas informações e essa parte do bearer informa que ele deve enviar um token para esse caminho
+        response.setHeader("www-authenticate", "Bearer realm='/api/auth'");
         response.sendError(401);
     }
 }
