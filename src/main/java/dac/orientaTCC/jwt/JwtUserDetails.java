@@ -18,7 +18,6 @@ public class JwtUserDetails extends User {
         this.codigoUsuario = codigoUsuario;
     }
 
-    //so precisa pegar o id e a role, pq como a classe extends da User ela ja tras o getEmail e o getSenha.
     public Long getId(){
         return this.id;
     }

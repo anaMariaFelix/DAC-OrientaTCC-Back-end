@@ -24,7 +24,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private final AlunoService alunoService;
     private final OrientadorService orientadorService;
 
-    @Override //vai buscar um usuario por email, se ele for encontrado ele é retornado no formato de um userDetails
+    @Override
     public UserDetails loadUserByUsername(String email){
         Usuario usuario = usuarioService.buscarPorEmail(email);
         String identificador;
@@ -44,7 +44,6 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new JwtUserDetails(usuario, identificador, codigoUsuario);
     }
 
-    //utilizado para gerar o token jwt, quando o cliente vai autenticar na aplicação
     public JwtToken getTokenAuthenticated(String email){
 
         Role role = usuarioService.buscarPorEmail(email).getTipoRole();
