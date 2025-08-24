@@ -22,7 +22,7 @@ public class UsuarioController {
 
 
     @GetMapping("/email/{email}")
-    @PreAuthorize("hasAnyRole('COORDENADOR','ALUNO', 'ORIENTADOR') AND (#id == authentication.principal.id)")
+    @PreAuthorize("hasAnyRole('COORDENADOR','ALUNO', 'ORIENTADOR')")
     public ResponseEntity<UsuarioResponseDTO> findByEmail(@PathVariable String email) {
         Usuario response = usuarioService.buscarPorEmail(email);
         return ResponseEntity.ok().body(UsuarioMapper.toUsuarioDTO(response));

@@ -59,7 +59,7 @@ public class OrientadorController {
         return ResponseEntity.ok(OrientadorMapper.toListOrientadorDTO(orientadores));
     }
 
-    @PreAuthorize("hasRole('ORIENTADOR') AND #orientadorCreateDTO.getSiape == authentication.principal.identificador")
+    @PreAuthorize("hasAnyRole('ORIENTADOR', 'COORDENADOR') AND #orientadorCreateDTO.getSiape == authentication.principal.identificador")
     @PutMapping("/")
     public ResponseEntity<OrientadorResponseDTO> update(@RequestBody OrientadorCreateDTO orientadorCreateDTO){
         Orientador orientador = orientadorService.update(orientadorCreateDTO);

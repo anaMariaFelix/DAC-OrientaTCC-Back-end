@@ -17,9 +17,9 @@ public class EmailController {
         this.emailService = emailService;
     }
 
-    @PostMapping("/enviar/{email}/{nome}")
-    public String send(@PathVariable String email, @PathVariable String nome) {
-        emailService.enviarEmail(email, nome);
+    @PostMapping("/enviar/{email}")
+    public String send(@PathVariable String email) {
+        emailService.enviarEmail(email);
         return "Enviado para " + email;
     }
 

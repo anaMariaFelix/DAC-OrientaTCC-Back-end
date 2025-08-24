@@ -28,13 +28,12 @@ public class AutenticacaoController {
 
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/auth")   //METODO USADO QUANDO O USUARIO FIZER UMA REQUISIÇÃO DE AUTENTICAÇÃO, PASSANDO O EMAIL E A SENHA
+    @PostMapping("/auth")
     public ResponseEntity<?> autenticar(@RequestBody @Valid UsuarioLoginDTO dto, HttpServletRequest request){
 
         log.info("Processo de autenticação pelo login {}",dto.getEmail());
 
         try{
-            //OS VALORES DO USUARIO SERAM RECUPERADOS E PASSADOS PARA ESSA CLASSE USERNAMEPASSWORDAUTHENTICATIONTOKEN QUE VAI PEGAR ESSE USUARIO E SENHA E VAI BUSCAR NO BANCO
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha());
             log.info("2 log");
             authenticationManager.authenticate(authenticationToken);
