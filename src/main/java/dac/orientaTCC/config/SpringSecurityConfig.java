@@ -33,6 +33,8 @@ public class SpringSecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/pdf/arquivo/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/email/enviar/{email}").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
