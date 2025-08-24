@@ -1,12 +1,9 @@
 package dac.orientaTCC.service;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import dac.orientaTCC.dto.PdfDTO;
 import dac.orientaTCC.mapper.PDFMapper;
 import dac.orientaTCC.model.entities.Atividade;

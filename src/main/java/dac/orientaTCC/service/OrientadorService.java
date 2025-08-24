@@ -28,18 +28,15 @@ public class OrientadorService {
     private final OrientadorRepository orientadorRepository;
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
-    private final AlunoRepository alunoRepository;
     private final TrabalhoAcademicoTCCService trabalhoAcademicoTCCService;
 
     public OrientadorService(
             OrientadorRepository orientadorRepository,
-            AlunoRepository alunoRepository,
             UsuarioService usuarioService,
             PasswordEncoder passwordEncoder,
             @Lazy TrabalhoAcademicoTCCService trabalhoAcademicoTCCService
     ) {
         this.orientadorRepository = orientadorRepository;
-        this.alunoRepository = alunoRepository;
         this.usuarioService = usuarioService;
         this.passwordEncoder = passwordEncoder;
         this.trabalhoAcademicoTCCService = trabalhoAcademicoTCCService;

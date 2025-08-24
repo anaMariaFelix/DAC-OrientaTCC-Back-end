@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import dac.orientaTCC.enums.StatusPDF;
+import dac.orientaTCC.enums.StatusTrabalho;
 import dac.orientaTCC.model.entities.TrabalhoAcademicoTCC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,24 @@ public class AtividadeService {
 
 			Atividade atividadeSalva = atividadeRepository.save(atividade);
 
+			TrabalhoAcademicoTCC trabalhoExistente = trabalhoAcademicoTCCService.findById(atividadeDTO.getIdTrabalho());
+			List<Atividade> listaAtividadeTrabalho = listarPorTrabalho(trabalhoExistente.getId());
+
+			int contador = 0;
+
+			for (Atividade atividadeExistente : listaAtividadeTrabalho) {
+				if (atividadeExistente.getStatus() == StatusPDF.AVALIADO) {
+					contador++;
+				}
+			}
+
+			if (contador == listaAtividadeTrabalho.size()) {
+				trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId(), StatusTrabalho.CONCLUIDO);
+
+			} else {
+				trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId(), StatusTrabalho.EM_ANDAMENTO);
+			}
+
 			return ResponseEntity.status(HttpStatus.CREATED).body(atividadeSalva);
 
 		} catch (IOException e) {
@@ -61,7 +80,7 @@ public class AtividadeService {
 		}
 	}
 
-	public ResponseEntity<?> editarAtividade(AtividadeDTO atividadeDTO, List<MultipartFile> arquivos, String tipoUser) {
+	public ResponseEntity<?> editarAtividade(AtividadeDTO atividadeDTO, List<MultipartFile> arquivos) {
 
 		if (atividadeDTO.getId() == null) {
 			return ResponseEntity.badRequest().body("ID da atividade não pode ser nulo");
@@ -99,7 +118,10 @@ public class AtividadeService {
 		}
 
 		if(contador == listaAtividadeTrabalho.size()){
-			trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId());
+			trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId(), StatusTrabalho.CONCLUIDO);
+
+		}else{
+			trabalhoAcademicoTCCService.updateStatus(trabalhoExistente.getId(), StatusTrabalho.EM_ANDAMENTO);
 		}
 
 		if (arquivos != null && !arquivos.isEmpty()) {

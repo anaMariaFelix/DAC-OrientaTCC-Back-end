@@ -90,10 +90,10 @@ public class TrabalhoAcademicoTCCService {
     }
 
     @Transactional
-    public void updateStatus(Long id) {
+    public void updateStatus(Long id, StatusTrabalho status) {
         TrabalhoAcademicoTCC trabalhoExistente = findById(id);
 
-        trabalhoExistente.setStatus(StatusTrabalho.CONCLUIDO);
+        trabalhoExistente.setStatus(status);
 
         trabalhoAcademicoTCCRepository.save(trabalhoExistente);
     }

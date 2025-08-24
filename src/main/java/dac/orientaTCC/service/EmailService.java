@@ -3,6 +3,7 @@ package dac.orientaTCC.service;
 import java.util.List;
 import java.util.Map;
 
+import dac.orientaTCC.model.entities.Usuario;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,13 +28,19 @@ public class EmailService {
         this.usuarioService = usuarioService;
     }
 
-    public void enviarEmail(String email, String nome) {
+    public void enviarEmail(String email) {
+        Usuario usuarioExistente = usuarioService.buscarPorEmail(email);
+
+        if (usuarioExistente == null) {
+            return;
+        }
 
         String novaSenha = GeradorSenha.gerarSenhaAleatoria();
 
         usuarioService.editarSenha(email, novaSenha);
 
-        String html = gerarHtmlRecuperacaoSenha(nome, novaSenha);
+        String username = email.split("@")[0];
+        String html = gerarHtmlRecuperacaoSenha(username, novaSenha);
 
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

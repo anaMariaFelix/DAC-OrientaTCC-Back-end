@@ -21,7 +21,7 @@ public class ErrorMessage {
     private String statusText;
     private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)//esse atributo so sera mostrado se ele n for nullo, caso contrario ele n aparece
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> erros;
 
     public ErrorMessage(){
@@ -45,7 +45,7 @@ public class ErrorMessage {
         addErros(result);
     }
 
-    private void addErros(BindingResult result) { //esse metodo sera usado quando for feita as validações
+    private void addErros(BindingResult result) {
         this.erros = new HashMap<>();
         for(FieldError fieldError : result.getFieldErrors()){
             this.erros.put(fieldError.getField(), fieldError.getDefaultMessage());
